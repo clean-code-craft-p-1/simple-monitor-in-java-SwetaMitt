@@ -25,19 +25,19 @@ public final class Alerter {
    * Security/clean-code: uses a logger instead of raw console output.
    */
   static void alert(String message) throws InterruptedException {
+    LOGGER.fine("alert: entry");
     LOGGER.warning(message);
     blink();
+    LOGGER.fine("alert: exit");
   }
 
   /**
    * Performs the repeated visual alert that used to be duplicated for each vital.
    */
   private static void blink() throws InterruptedException {
+    LOGGER.info("Blinking alert signal.");
     for (int i = 0; i < 6; i++) {
-      LOGGER.info("* ");
-      Thread.sleep(blinkDelayMs);
-      LOGGER.info(" *");
-      Thread.sleep(blinkDelayMs);
+      Thread.sleep(blinkDelayMs * 2);
     }
   }
 }

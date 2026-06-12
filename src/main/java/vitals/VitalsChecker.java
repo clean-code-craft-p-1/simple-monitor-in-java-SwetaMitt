@@ -4,8 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Application service for vital thresholding.
@@ -14,8 +12,6 @@ import java.util.logging.Logger;
  * alert boundary only when output is needed.
  */
 public final class VitalsChecker {
-
-  private static final Logger LOGGER = Logger.getLogger(VitalsChecker.class.getName());
 
   // Adult clinical thresholds — named constants so future changes have one place to edit.
   private static final float TEMP_LOW   =  95f;
@@ -55,7 +51,6 @@ public final class VitalsChecker {
    * and age-specific ranges without changing this checker.
    */
   static Optional<Vital> firstFailingVital(List<Vital> vitals) {
-    LOGGER.log(Level.FINE, "Checking {0} vital(s).", vitals.size());
     return validated(vitals).stream()
         .filter(vital -> !vital.isOk())
         .findFirst();
@@ -88,11 +83,9 @@ public final class VitalsChecker {
     Objects.requireNonNull(alert, "alert");
     Optional<Vital> failing = firstFailingVital(vitals);
     if (failing.isPresent()) {
-      LOGGER.log(Level.WARNING, "Vital out of range: {0}", failing.get().outOfRangeMessage());
       alert.alert(failing.get().outOfRangeMessage());
       return false;
     }
-    LOGGER.fine("All vitals within acceptable range.");
     return true;
   }
 
@@ -109,7 +102,6 @@ public final class VitalsChecker {
     for (Vital vital : vitals) {
       Objects.requireNonNull(vital, "vitals must not contain null entries");
     }
-    LOGGER.log(Level.FINE, "Vital list validated: {0} vital(s).", vitals.size());
     return vitals;
   }
 }

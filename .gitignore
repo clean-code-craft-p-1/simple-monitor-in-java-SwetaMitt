@@ -1,3 +1,4 @@
 **/*.class
 target
 .vscode/
+CODE_QUALITY.md
