@@ -55,9 +55,7 @@ public final class VitalsChecker {
    * and age-specific ranges without changing this checker.
    */
   static Optional<Vital> firstFailingVital(List<Vital> vitals) {
-    if (LOGGER.isLoggable(Level.FINE)) {
-      LOGGER.log(Level.FINE, "Checking {0} vital(s).", vitals.size());
-    }
+    LOGGER.log(Level.FINE, () -> "Checking " + vitals.size() + " vital(s).");
     return validated(vitals).stream()
         .filter(vital -> !vital.isOk())
         .findFirst();
@@ -90,9 +88,7 @@ public final class VitalsChecker {
     Objects.requireNonNull(alert, "alert");
     Optional<Vital> failing = firstFailingVital(vitals);
     if (failing.isPresent()) {
-      if (LOGGER.isLoggable(Level.WARNING)) {
-        LOGGER.log(Level.WARNING, "Vital out of range: {0}", failing.get().outOfRangeMessage());
-      }
+      LOGGER.log(Level.WARNING, () -> "Vital out of range: " + failing.get().outOfRangeMessage());
       alert.alert(failing.get().outOfRangeMessage());
       return false;
     }
@@ -113,9 +109,7 @@ public final class VitalsChecker {
     for (Vital vital : vitals) {
       Objects.requireNonNull(vital, "vitals must not contain null entries");
     }
-    if (LOGGER.isLoggable(Level.FINE)) {
-      LOGGER.log(Level.FINE, "Vital list validated: {0} vital(s).", vitals.size());
-    }
+    LOGGER.log(Level.FINE, () -> "Vital list validated: " + vitals.size() + " vital(s).");
     return vitals;
   }
 }
