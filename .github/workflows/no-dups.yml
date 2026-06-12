@@ -10,7 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@v6
     - name: Install jscpd
-      run: sudo npm install -g jscpd
+      run: sudo npm install -g jscpd@2.0.16
 
     - name: No Duplication beyond 3 lines
       run:  jscpd . --min-lines 3 --min-tokens 25 --threshold 0 --ignore "**/.github/**"
