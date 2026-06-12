@@ -20,15 +20,18 @@ import org.junit.Test;
  */
 public class VitalsCheckerTest {
 
+  private long originalBlinkDelayMs;
+
   @Before
   public void disableBlinkDelay() {
     // Set to 0 so the production Alerter path runs instantly in tests.
+    originalBlinkDelayMs = Alerter.blinkDelayMs;
     Alerter.blinkDelayMs = 0;
   }
 
   @After
   public void restoreBlinkDelay() {
-    Alerter.blinkDelayMs = 1000;
+    Alerter.blinkDelayMs = originalBlinkDelayMs;
   }
 
   // --- firstFailingVital: default three-reading API ---
