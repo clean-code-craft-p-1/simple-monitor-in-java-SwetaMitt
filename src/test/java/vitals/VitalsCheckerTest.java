@@ -20,18 +20,22 @@ import org.junit.Test;
  */
 public class VitalsCheckerTest {
 
-  private long originalBlinkDelayMs;
-
+  private long originalBlinkDelayMs;
+
+
+
   @Before
   public void disableBlinkDelay() {
     // Set to 0 so the production Alerter path runs instantly in tests.
-    originalBlinkDelayMs = Alerter.blinkDelayMs;
+    originalBlinkDelayMs = Alerter.blinkDelayMs;
+
     Alerter.blinkDelayMs = 0;
   }
 
   @After
   public void restoreBlinkDelay() {
-    Alerter.blinkDelayMs = originalBlinkDelayMs;
+    Alerter.blinkDelayMs = originalBlinkDelayMs;
+
   }
 
   // --- firstFailingVital: default three-reading API ---
@@ -94,6 +98,19 @@ public class VitalsCheckerTest {
   }
 
   // --- firstFailingVital: caller-supplied vital list (future extension) ---
+
+  @Test
+  public void customVitalSignImplementationIsAccepted() {
+    // Demonstrates that a non-Vital implementation of VitalSign (e.g. one that
+    // carries age-specific logic) works without changing VitalsChecker.
+    VitalSign agePulse = new VitalSign() {
+      @Override public boolean isOk() { return false; }
+      @Override public String outOfRangeMessage() { return "Pulse Rate out of range for age!"; }
+    };
+    assertEquals(
+        "Pulse Rate out of range for age!",
+        VitalsChecker.firstFailingVital(Arrays.asList(agePulse)).get().outOfRangeMessage());
+  }
 
   @Test
   public void additionalVendorVitalCanBeCheckedWithoutChangingChecker() {

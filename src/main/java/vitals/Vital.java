@@ -7,7 +7,7 @@ import java.util.Objects;
  * Solves the README goals for modularity, testability, and future limits by
  * keeping threshold rules as data instead of branching inside the checker.
  */
-public final class Vital {
+public final class Vital implements VitalSign {
   private final String outOfRangeMessage;
   private final float value;
   private final float lowerLimit;
@@ -36,6 +36,7 @@ public final class Vital {
    * Solves the README request to shorten semantic distance between inputs,
    * acceptable limits, and the pass/fail result.
    */
+  @Override
   public boolean isOk() {
     return value >= lowerLimit && value <= upperLimit;
   }
@@ -44,6 +45,7 @@ public final class Vital {
    * Returns the consumer-facing message used when this vital fails.
    * Keeps alert wording close to the vital definition instead of duplicating it.
    */
+  @Override
   public String outOfRangeMessage() {
     return outOfRangeMessage;
   }
