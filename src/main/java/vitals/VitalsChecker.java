@@ -1,5 +1,6 @@
 package vitals;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -41,7 +42,7 @@ public final class VitalsChecker {
    * Reduces cyclomatic complexity by delegating the actual range check to each
    * {@link Vital} object.
    */
-  static Optional<Vital> firstFailingVital(float temperature, float pulseRate, float spo2) {
+  static Optional<VitalSign> firstFailingVital(float temperature, float pulseRate, float spo2) {
     return firstFailingVital(vitalsOf(temperature, pulseRate, spo2));
   }
 
@@ -50,7 +51,7 @@ public final class VitalsChecker {
    * Supports future README scenarios such as new vital signs, vendor readings,
    * and age-specific ranges without changing this checker.
    */
-  static Optional<Vital> firstFailingVital(List<Vital> vitals) {
+  static Optional<VitalSign> firstFailingVital(List<? extends VitalSign> vitals) {
     return validated(vitals).stream()
         .filter(vital -> !vital.isOk())
         .findFirst();
@@ -70,7 +71,7 @@ public final class VitalsChecker {
    * Checks any supplied vital list and uses the production console alert.
    * Adds extensibility for new readings while keeping I/O at the outer boundary.
    */
-  static boolean vitalsOk(List<Vital> vitals) throws InterruptedException {
+  static boolean vitalsOk(List<? extends VitalSign> vitals) throws InterruptedException {
     return vitalsOk(vitals, Alerter::alert);
   }
 
@@ -79,9 +80,9 @@ public final class VitalsChecker {
    * This is the test seam that proves alert behavior without sleeping or writing
    * to the console, satisfying the README's simple-and-testable direction.
    */
-  static boolean vitalsOk(List<Vital> vitals, VitalAlert alert) throws InterruptedException {
+  static boolean vitalsOk(List<? extends VitalSign> vitals, VitalAlert alert) throws InterruptedException {
     Objects.requireNonNull(alert, "alert");
-    Optional<Vital> failing = firstFailingVital(vitals);
+    Optional<VitalSign> failing = firstFailingVital(vitals);
     if (failing.isPresent()) {
       alert.alert(failing.get().outOfRangeMessage());
       return false;
@@ -94,14 +95,14 @@ public final class VitalsChecker {
    * Security/robustness: rejects null or empty collections and null entries from
    * external providers instead of allowing ambiguous monitoring results.
    */
-  private static List<Vital> validated(List<Vital> vitals) {
+  private static List<VitalSign> validated(List<? extends VitalSign> vitals) {
     Objects.requireNonNull(vitals, "vitals");
     if (vitals.isEmpty()) {
       throw new IllegalArgumentException("vitals must not be empty");
     }
-    for (Vital vital : vitals) {
+    for (VitalSign vital : vitals) {
       Objects.requireNonNull(vital, "vitals must not contain null entries");
     }
-    return vitals;
+    return new ArrayList<>(vitals);
   }
 }
